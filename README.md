@@ -14,8 +14,7 @@ Set them using:
 Or edit configuration file manually: 
 > kdeploy config edit
 
-Assumed that all workloads are of Deployment type.  
-If some are StatefulSets, set them in configurations:  
+Assumed that all workloads are of Deployment type. If some are StatefulSets, set them in configurations (comma separated):  
 >kdeploy config set statefulsets ms-events,ms-core
 
 kdeploy remembers every deployment you made and allows you to redeploy previous images.  

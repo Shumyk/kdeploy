@@ -9,7 +9,8 @@ const (
 	ImagePath = "%v/%v%v%v@sha256:%v"
 )
 
-// TODO: comment
+// ParseImagePath parses input string to retrieve tag and digest.
+// image usually a string `registry/repository-service:tag@sha256:digest`
 func ParseImagePath(i string) (tag, digest string) {
 	repoTagAndPrefixedDigest := strings.Split(i, "@")
 	repoAndTag := strings.Split(repoTagAndPrefixedDigest[0], ":")

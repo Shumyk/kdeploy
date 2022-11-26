@@ -1,5 +1,5 @@
 # kdeploy
-Deploy from the terminal.
+Deploy from the terminal on Kubernetes.
 
 Searches for images of requested microservice in Google Container Registry,
 Prompts you to interactively select an image for deployment (arrows navigation, search features),

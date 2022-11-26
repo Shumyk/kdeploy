@@ -1,0 +1,11 @@
+#!/bin/bash
+
+go build
+
+chmod +x kdeploy
+chmod +x select_image_prompt
+
+cp kdeploy /usr/local/bin
+mv select_image_prompt /usr/local/bin
+
+echo "you be ready to kdeploy"

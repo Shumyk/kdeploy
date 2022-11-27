@@ -3,8 +3,8 @@
 Deploy from the terminal on Kubernetes.
 
 Searches for images of requested microservice in Google Container Registry,
-Prompts you to interactively select an image for deployment (arrows navigation, search features),
-And sets the selected image in the workload.  
+prompts you to interactively select an image for deployment (arrows navigation, search features),
+and sets the selected image in the workload.  
 > kdeploy [microservice]
 
 If microservice was not specified - it obtains possible repositories from the registry and prompts you to select it first.  

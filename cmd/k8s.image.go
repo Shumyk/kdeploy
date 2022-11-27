@@ -26,9 +26,9 @@ func GetImage() (tag, digest string) {
 
 func SetImage(image *SelectedImage) {
 	newImage := ComposeImagePath(Registry(), Repository(), microservice, image.Tag(), image.Digest)
-	imageChange := composeImagePatch(newImage)
-	data, err := json.Marshal(imageChange)
-	ErrorCheck(err, "Unmarshalling image change failed")
+	imagePatch := composeImagePatch(newImage)
+	data, err := json.Marshal(imagePatch)
+	ErrorCheck(err, "Unmarshalling image patch failed")
 
 	updateError := clientSet.AppsV1().RESTClient().
 		Patch(types.StrategicMergePatchType).

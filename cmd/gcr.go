@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"context"
-	"github.com/google/go-containerregistry/pkg/authn"
 	. "shumyk/kdeploy/cmd/util"
 	"strings"
+
+	"github.com/google/go-containerregistry/pkg/authn"
 
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/google/go-containerregistry/pkg/v1/google"
@@ -19,7 +20,7 @@ var (
 
 func ListRepoImages(ch chan<- *google.Tags) {
 	_, err := google.NewGcloudAuthenticator()
-	ErrorCheck(err, "Gcloud authentication failed")
+	ErrorCheck(err, "GCloud authentication failed")
 
 	registry := name.WithDefaultRegistry(Registry())
 	repo, err := name.NewRepository(BuildRepository(microservice), registry)

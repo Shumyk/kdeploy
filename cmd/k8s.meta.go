@@ -23,17 +23,17 @@ var (
 func CreateClientConfigFromKubeConfig() clientcmd.ClientConfig {
 	k8sConfigPath := filepath.Join(clientcmd.RecommendedConfigDir, clientcmd.RecommendedFileName)
 	k8sConfigBytes, err := os.ReadFile(k8sConfigPath)
-	ErrorCheck(err, "Couldn't read kube config")
+	ErrorCheck(err, "Failed to read Kube config")
 
 	conf, err := clientcmd.NewClientConfigFromBytes(k8sConfigBytes)
-	ErrorCheck(err, "Failed creating new API server client")
+	ErrorCheck(err, "Failed to create new k8s API client config")
 	return conf
 }
 
 func LoadMetadata(config clientcmd.ClientConfig) {
 	var err error
 	namespace, _, err = config.Namespace()
-	ErrorCheck(err, "Resolving namespace failed")
+	ErrorCheck(err, "Failed to resolve k8s namespace")
 
 	k8sResourceName = namespace + "-" + microservice
 	k8sResource = ResolveResourceType(microservice)

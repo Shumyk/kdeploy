@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"encoding/json"
+	. "shumyk/kdeploy/cmd/model"
+	. "shumyk/kdeploy/cmd/util"
+
 	"k8s.io/apimachinery/pkg/types"
 	confApps "k8s.io/client-go/applyconfigurations/apps/v1"
 	core "k8s.io/client-go/applyconfigurations/core/v1"
-	. "shumyk/kdeploy/cmd/model"
-	. "shumyk/kdeploy/cmd/util"
 )
 
 func GetImage() (tag, digest string) {
@@ -28,7 +29,7 @@ func SetImage(image *SelectedImage) {
 	newImage := ComposeImagePath(Registry(), Repository(), microservice, image.Tag(), image.Digest)
 	imagePatch := composeImagePatch(newImage)
 	data, err := json.Marshal(imagePatch)
-	ErrorCheck(err, "Unmarshalling image patch failed")
+	ErrorCheck(err, "Marshalling image patch failed")
 
 	updateError := clientSet.AppsV1().RESTClient().
 		Patch(types.StrategicMergePatchType).

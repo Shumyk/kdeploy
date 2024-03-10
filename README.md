@@ -57,9 +57,7 @@ Running deploy-previous mode without specifying microservice results in promptin
 </details>
 
 ---
-
-
-### Configuration
+### Configuration ⚙️
 
 kdeploy requires two configuration properties - `registry` and `repository`.  
 The `registry` is where to look for your images (e.x. `us.gcr.io`), and the `repository` is the path to your images. If not set you will be prompted to enter them.  
@@ -72,7 +70,8 @@ Or edit configuration file manually:
 Assumed that all workloads are of Deployment type. If some are StatefulSets, set them in configurations (comma separated):  
 >kdeploy config set statefulsets ms-events,ms-core
 
-### How to make it run?
+---
+### How to make it run? 🎬
 
 Run `go build` command in the root directory to build the binary file.
 Then place it on at `/usr/local/bin` for convenient access anywhere on your system.

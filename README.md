@@ -19,7 +19,7 @@ So, why not automate it?\
 The motto of any self-respecting developer.\
 With each filthy CD cycle, when I was forced to quit my code editor or terminal, my mind started to become poisoned with this paranoic question. Poisoning grew alongside anger, irritation, and annoyance.
 
-Hence, on the third day, I started writing a Bash script. The initial version, which can be found in the [legacy](link) folder. Doing its job, but clumsy, unmaintainable, and slow (still cool 😎 , check it out if you're a Bash guy).
+Hence, on the third day, I started writing a Bash script. The initial version, which can be found in the [legacy](legacy) folder. Doing its job, but clumsy, unmaintainable, and slow (still cool 😎 , check it out if you're a Bash guy).
 However, the demand for new features, and its challenges when writing them in Bash, paved my path to Golang and the current contents of this brilliant repository.
 
 ---

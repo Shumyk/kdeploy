@@ -1,12 +1,15 @@
 package cmd
 
 import (
+	util "shumyk/kdeploy/cmd/util"
+
 	"github.com/spf13/cobra"
-	. "shumyk/kdeploy/cmd/util"
 )
 
 var (
-	previousMode bool
+	arg_microserviceName    string
+	arg_previousMode        bool
+	arg_k8sResourceFullName string
 
 	kdeploy = cobra.Command{
 		Use:   "kdeploy [microservice]",
@@ -71,7 +74,7 @@ func kdeployRun(_ *cobra.Command, args []string) {
 }
 
 func deploySelectingRegistry() {
-	if previousMode {
+	if arg_previousMode {
 		KDeployPreviousWithRegistry()
 	} else {
 		KDeployWithRegistry()
@@ -79,8 +82,8 @@ func deploySelectingRegistry() {
 }
 
 func deployMicroservice(args []string) {
-	microservice = args[0]
-	if previousMode {
+	arg_microserviceName = args[0]
+	if arg_previousMode {
 		KDeployPrevious()
 	} else {
 		KDeploy()
@@ -88,11 +91,12 @@ func deployMicroservice(args []string) {
 }
 
 func Execute() {
-	ErrorCheck(kdeploy.Execute(), "Failed to execute kdeploy :|")
+	util.ErrorCheck(kdeploy.Execute(), "Failed to execute kdeploy :|")
 }
 
 func init() {
-	kdeploy.Flags().BoolVarP(&previousMode, "previous", "p", false, "deploy previous images")
+	kdeploy.Flags().BoolVarP(&arg_previousMode, "previous", "p", false, "deploy previous images")
+	kdeploy.Flags().StringVarP(&arg_k8sResourceFullName, "k8s-name", "n", "", "k8s name to use for deployment")
 
 	configCmd.AddCommand(&configViewCmd, &configSetCmd, &configEditCmd)
 	kdeploy.AddCommand(&configCmd)

@@ -16,7 +16,7 @@ func (p PreviousImage) ImageOption() ImageOption {
 	}
 }
 
-func PrevImageOf(tag, digest string) PreviousImage {
+func PreviousImageOf(tag, digest string) PreviousImage {
 	return PreviousImage{
 		Tag:      tag,
 		Digest:   digest,

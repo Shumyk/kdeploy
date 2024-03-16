@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	. "shumyk/kdeploy/cmd/model"
-	. "shumyk/kdeploy/cmd/util"
+	model "shumyk/kdeploy/cmd/model"
+	util "shumyk/kdeploy/cmd/util"
 )
 
 var config configuration
@@ -14,7 +14,7 @@ type configuration struct {
 	Previous     PreviousDeployments `yaml:"previous,omitempty" conf:"no"`
 }
 
-type PreviousDeployments map[string]PreviousImages
+type PreviousDeployments map[string]model.PreviousImages
 
 func (c configuration) View() *configuration {
 	c.Previous = nil
@@ -22,6 +22,6 @@ func (c configuration) View() *configuration {
 }
 
 func (p PreviousDeployments) Keys() []string {
-	keyMapping := ReturnKey[string, PreviousImages]
-	return MapToSliceMapping(p, keyMapping)
+	keyMapping := util.ReturnKey[string, model.PreviousImages]
+	return util.MapToSliceMapping(p, keyMapping)
 }

@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"context"
-	. "shumyk/kdeploy/cmd/util"
+	util "shumyk/kdeploy/cmd/util"
 	"strings"
 
 	"github.com/google/go-containerregistry/pkg/authn"
@@ -20,26 +20,26 @@ var (
 
 func ListRepoImages(ch chan<- *google.Tags) {
 	_, err := google.NewGcloudAuthenticator()
-	ErrorCheck(err, "GCloud authentication failed")
+	util.ErrorCheck(err, "GCloud authentication failed")
 
 	registry := name.WithDefaultRegistry(Registry())
-	repo, err := name.NewRepository(BuildRepository(microservice), registry)
-	ErrorCheck(err, "Obtaining new repository failed")
+	repo, err := name.NewRepository(BuildRepository(arg_microserviceName), registry)
+	util.ErrorCheck(err, "Obtaining new repository failed")
 
 	keychain := google.WithAuthFromKeychain(auth)
 	tags, err := google.List(repo, keychain)
-	ErrorCheck(err, "Listing tags failed")
+	util.ErrorCheck(err, "Listing tags failed")
 
 	ch <- tags
 }
 
 func ListRepos() (results []string) {
 	registry, err := name.NewRegistry(Registry())
-	ErrorCheck(err, "Obtaining new registry failed")
+	util.ErrorCheck(err, "Obtaining new registry failed")
 
 	authOption := remote.WithAuthFromKeychain(auth)
 	repos, err := remote.Catalog(ctx, registry, authOption)
-	ErrorCheck(err)
+	util.ErrorCheck(err)
 
 	return filterRepos(repos)
 }

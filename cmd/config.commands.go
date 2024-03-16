@@ -2,20 +2,21 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"gopkg.in/yaml.v3"
 	"os"
 	"os/exec"
 	"reflect"
-	. "shumyk/kdeploy/cmd/util"
+	util "shumyk/kdeploy/cmd/util"
 	"strings"
 	"text/tabwriter"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"gopkg.in/yaml.v3"
 )
 
 func runConfigView(_ *cobra.Command, _ []string) {
 	viewBytes, err := yaml.Marshal(config.View())
-	ErrorCheck(err, "Couldn't marshal config file")
+	util.ErrorCheck(err, "Couldn't marshal config file")
 	fmt.Println(string(viewBytes))
 }
 
@@ -40,13 +41,13 @@ func RunConfigSet(_ *cobra.Command, args []string) {
 		}
 		_, _ = fmt.Fprintln(properties, "\t"+strings.ToLower(field.Name)+"\t:\t"+field.Type.String())
 	}
-	RedStderr("Non existing property: ", property)
-	BoringStderr("Possible configuration properties:")
-	ErrorCheck(properties.Flush(), "Could not print configuration properties")
+	util.RedStderr("Non existing property: ", property)
+	util.BoringStderr("Possible configuration properties:")
+	util.ErrorCheck(properties.Flush(), "Could not print configuration properties")
 }
 
 func RunConfigEdit(_ *cobra.Command, _ []string) {
 	vim := exec.Command("vim", viper.ConfigFileUsed())
 	vim.Stdin, vim.Stdout = os.Stdin, os.Stdout
-	ErrorCheck(vim.Run(), "Error editing configuration")
+	util.ErrorCheck(vim.Run(), "Error editing configuration")
 }

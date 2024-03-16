@@ -31,7 +31,7 @@ func Goodbye(s ...any) {
 
 func ErrorCheck(err error, msg ...any) {
 	if err != nil {
-		Error(err, msg)
+		Error(msg, err)
 	}
 }
 

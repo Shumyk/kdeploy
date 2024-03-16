@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"encoding/json"
-	. "shumyk/kdeploy/cmd/model"
-	. "shumyk/kdeploy/cmd/util"
+	model "shumyk/kdeploy/cmd/model"
+	util "shumyk/kdeploy/cmd/util"
 
 	"k8s.io/apimachinery/pkg/types"
 	confApps "k8s.io/client-go/applyconfigurations/apps/v1"
@@ -11,44 +11,45 @@ import (
 )
 
 func GetImage() (tag, digest string) {
-	var response K8sResourceAgnosticResponse
+	var response model.K8sResourceAgnosticResponse
 	err := clientSet.AppsV1().RESTClient().
 		Get().
-		Namespace(namespace).
-		Resource(k8sResource).
-		Name(k8sResourceName).
+		Namespace(k8sNamespace).
+		Resource(k8sResourceType).
+		Name(k8sResourceFullName).
 		Do(ctx).
 		Into(&response)
-	ErrorCheck(err, "GET image failed")
+	util.ErrorCheck(err, "GET image failed")
 
 	imagePath := response.Spec.Template.Spec.Containers[0].Image
-	return ParseImagePath(imagePath)
+	return util.ParseImagePath(imagePath)
 }
 
-func SetImage(image *SelectedImage) {
-	newImage := ComposeImagePath(Registry(), Repository(), microservice, image.Tag(), image.Digest)
+func SetImage(image *model.SelectedImage) {
+	newImage := util.ComposeImagePath(Registry(), Repository(), arg_microserviceName, image.Tag(), image.Digest)
 	imagePatch := composeImagePatch(newImage)
 	data, err := json.Marshal(imagePatch)
-	ErrorCheck(err, "Marshalling image patch failed")
+	util.ErrorCheck(err, "Marshalling image patch failed")
 
 	updateError := clientSet.AppsV1().RESTClient().
 		Patch(types.StrategicMergePatchType).
-		Namespace(namespace).
-		Resource(k8sResource).
-		Name(k8sResourceName).
+		Namespace(k8sNamespace).
+		Resource(k8sResourceType).
+		Name(k8sResourceFullName).
 		Body(data).
 		Do(ctx).
 		Error()
 
-	ErrorCheck(updateError, "PATCH image failed")
-	PrintImageInfo(HeaderDeployedImage, image.Tags[0], image.Digest)
+	util.ErrorCheck(updateError, "PATCH image failed")
+	util.PrintImageInfo(util.HeaderDeployedImage, image.Tags[0], image.Digest)
 }
 
-// composeImagePatch composes resource apply configuration to patch only image.
-// DeploymentApplyConfiguration is used, but it's actually resource agnostic as we patch only image,
-// which is located under same place among resources.
+// composeImagePatch composes a resource apply configuration to patch only the image of a Kubernetes resource.
+// It uses DeploymentApplyConfiguration, but it's actually resource agnostic as it only patches the image,
+// which is located in the same place among resources.
 func composeImagePatch(newImage string) confApps.DeploymentApplyConfiguration {
-	container := core.ContainerApplyConfiguration{Image: &newImage, Name: &microservice}
+	containerName := ContainerName()
+	container := core.ContainerApplyConfiguration{Image: &newImage, Name: &containerName}
 	podSpec := core.PodSpecApplyConfiguration{Containers: []core.ContainerApplyConfiguration{container}}
 	templateSpec := core.PodTemplateSpecApplyConfiguration{Spec: &podSpec}
 	resourceSpec := confApps.DeploymentSpecApplyConfiguration{Template: &templateSpec}

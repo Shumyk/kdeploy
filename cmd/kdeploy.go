@@ -2,7 +2,7 @@ package cmd
 
 import (
 	prompt "shumyk/kdeploy/cmd/prompt"
-	. "shumyk/kdeploy/cmd/util"
+	util "shumyk/kdeploy/cmd/util"
 )
 
 func KDeploy() {
@@ -11,20 +11,20 @@ func KDeploy() {
 
 func KDeployWithRegistry() {
 	repos := ListRepos()
-	microservice = prompt.RepoSelect(repos)
+	arg_microserviceName = prompt.RepoSelect(repos)
 	DeployNew()
 }
 
 func KDeployPrevious() {
-	previous := GetPreviousDeployments()[microservice]
-	TerminateOnEmpty(previous, "previous deployments of", microservice, "absent")
+	previous := GetPreviousDeployments()[arg_microserviceName]
+	util.TerminateOnEmpty(previous, "previous deployments of", arg_microserviceName, "absent")
 	DeployPrevious(previous)
 }
 
 func KDeployPreviousWithRegistry() {
-	repos := GetPreviousDeployments().Keys()
-	TerminateOnEmpty(repos, "previous deployments absent")
+	var repos []string = GetPreviousDeployments().Keys()
+	util.TerminateOnEmpty(repos, "previous deployments absent")
 
-	microservice = prompt.RepoSelect(repos)
+	arg_microserviceName = prompt.RepoSelect(repos)
 	KDeployPrevious()
 }

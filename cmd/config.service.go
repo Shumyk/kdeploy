@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	. "shumyk/kdeploy/cmd/model"
-	. "shumyk/kdeploy/cmd/util"
+	model "shumyk/kdeploy/cmd/model"
+	util "shumyk/kdeploy/cmd/util"
 
 	"github.com/spf13/viper"
 )
@@ -13,20 +13,20 @@ func SetConfig(key string, value any) error {
 }
 
 func SetConfigHandling(key string, value any) {
-	ErrorCheck(SetConfig(key, value), "Could not set config")
+	util.ErrorCheck(SetConfig(key, value), "Could not set config")
 }
 
 func SaveDeployedImage(tag, digest string) {
-	deployedImage := PrevImageOf(tag, digest)
+	deployedImage := model.PreviousImageOf(tag, digest)
 	previous := GetPreviousDeployments()
 
-	previous[microservice] = append(previous[microservice], deployedImage)
-	Laugh(SetConfig("previous", previous))
+	previous[arg_microserviceName] = append(previous[arg_microserviceName], deployedImage)
+	util.Laugh(SetConfig("previous", previous))
 }
 
 func GetPreviousDeployments() PreviousDeployments {
 	if config.Previous == nil {
-		config.Previous = make(map[string]PreviousImages)
+		config.Previous = make(map[string]model.PreviousImages)
 	}
 	return config.Previous
 }
@@ -43,9 +43,23 @@ func BuildRepository(service string) string {
 	return config.Repository + service
 }
 
-func ResolveResourceType(service string) string {
+func ResolveResourceName() string {
+	return k8sNamespace + "-" + ContainerName()
+}
+
+// ContainerName returns container name from the command line argument.
+// If the command line argument is set, it has a priority.
+// Container name is also used as a part of the resource name.
+func ContainerName() string {
+	if arg_k8sResourceFullName != "" {
+		return arg_k8sResourceFullName
+	}
+	return arg_microserviceName
+}
+
+func ResolveResourceType() string {
 	for _, statefulSet := range config.StatefulSets {
-		if statefulSet == service {
+		if statefulSet == arg_microserviceName {
 			return "statefulsets"
 		}
 	}

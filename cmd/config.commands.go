@@ -16,7 +16,7 @@ import (
 
 func runConfigView(_ *cobra.Command, _ []string) {
 	viewBytes, err := yaml.Marshal(config.View())
-	util.ErrorCheck(err, "Couldn't marshal config file")
+	util.ErrorCheck(err, "Config file marshalling failed")
 	fmt.Println(string(viewBytes))
 }
 

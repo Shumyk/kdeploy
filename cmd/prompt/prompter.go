@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"shumyk/kdeploy/cmd/model"
 	util "shumyk/kdeploy/cmd/util"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 )
@@ -13,11 +14,12 @@ const (
 	repoSelectTitle  = "select repo"
 )
 
-func TextInput(name string) (result string, err error) {
+func TextInput(name, example string) (result string, err error) {
 	textInput := survey.Input{
-		Message: fmt.Sprintf("please enter %v", name),
+		Message: fmt.Sprintf("please enter %v [i.e. %v]", name, example),
 	}
 	err = survey.AskOne(&textInput, &result)
+	result = strings.TrimSpace(result)
 	return
 }
 

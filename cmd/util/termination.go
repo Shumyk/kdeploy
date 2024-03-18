@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 )
 
@@ -20,12 +19,12 @@ func TerminateOnEmpty[T any](args []T, msg ...any) {
 // Laugh just prints error message if present and ignores it
 func Laugh(err error) {
 	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, "Error:", err)
+		RedStderr("Error:", err)
 	}
 }
 
 func Goodbye(s ...any) {
-	fmt.Println(purple(s))
+	PurpleStout(s)
 	os.Exit(0)
 }
 
@@ -36,6 +35,6 @@ func ErrorCheck(err error, msg ...any) {
 }
 
 func Error(s ...any) {
-	_, _ = fmt.Fprintln(os.Stderr, red(s...))
+	RedStderr(s)
 	os.Exit(1)
 }

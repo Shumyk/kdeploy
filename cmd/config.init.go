@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/AlecAivazis/survey/v2/terminal"
 	"github.com/spf13/cobra"
@@ -20,28 +21,43 @@ func InitConfig(_ *cobra.Command, _ []string) {
 func LoadConfiguration(_ *cobra.Command, _ []string) {
 	home, err := os.UserHomeDir()
 	util.Laugh(err)
+	configDir := home + "/.config/kdeploy"
+	configName := ".kdeploy"
+	configType := "yaml"
+	configPath := filepath.Join(configDir, configName+"."+configType)
 
-	viper.AddConfigPath(home)
-	viper.SetConfigName(".kdeploy")
-	viper.SetConfigType("yaml")
+	viper.AddConfigPath(configPath)
+	viper.SetConfigName(configName)
+	viper.SetConfigType(configType)
 
-	_ = viper.SafeWriteConfig()
+	createConfigFileIfNotExists(configDir, configPath)
 	util.Laugh(viper.ReadInConfig())
 	util.Laugh(viper.Unmarshal(&config))
 }
 
+func createConfigFileIfNotExists(configDir, configPath string) {
+	if _, err := os.Stat(configPath); os.IsExist(err) {
+		return
+	}
+	err := os.MkdirAll(configDir, os.ModePerm)
+	util.ErrorCheck(err, "Failed to create config directory")
+	file, err := os.Create(configPath)
+	util.ErrorCheck(err, "Failed to create config file")
+	file.Close()
+}
+
 func validateVitalConfigs() {
 	if len(config.Registry) == 0 {
-		promptAndSaveConfig("registry")
+		promptAndSaveConfig("registry", "*gcr.io")
 	}
 	if len(config.Repository) == 0 {
-		promptAndSaveConfig("repository")
+		promptAndSaveConfig("repository", "your-domain-infra/domain/domain-")
 	}
 }
 
-func promptAndSaveConfig(configName string) {
-	util.RedStderr(configName, " not found in ", viper.ConfigFileUsed())
-	configValue, err := prompt.TextInput(configName)
+func promptAndSaveConfig(configName, example string) {
+	util.PurpleStout(configName, " not found in ", viper.ConfigFileUsed())
+	configValue, err := prompt.TextInput(configName, example)
 	handleConfigPromptError(configName, err)
 	SetConfigHandling(configName, configValue)
 }
@@ -49,10 +65,10 @@ func promptAndSaveConfig(configName string) {
 func handleConfigPromptError(configName string, err error) {
 	if err != nil {
 		if err == terminal.InterruptErr {
-			util.BoringStderr("Looks like you ctrl-c input. However, you can set it using:")
-			util.BoringStderr(fmt.Sprintf("	kdeploy config set %v <value>", configName))
-			util.BoringStderr("Or manually editing:")
-			util.BoringStderr("	kdeploy config edit")
+			util.PurpleStout("did you ctrl-c me? anyway, you can set it using:")
+			util.BoringStderr(fmt.Sprintf("\tkdeploy config set %v <value>", configName))
+			util.BoringStderr("or manually editing:")
+			util.BoringStderr("\tkdeploy config edit")
 			os.Exit(1)
 		}
 		util.ErrorCheck(err, "Failed to request user input for missing configuration")

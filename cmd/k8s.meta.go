@@ -37,7 +37,7 @@ func LoadMetadata(config clientcmd.ClientConfig) {
 	k8sResourceFullName = ResolveResourceName()
 	k8sResourceType = ResolveResourceType()
 
-	util.PrintEnvironmentInfo(arg_k8sResourceFullName, k8sNamespace)
+	util.PrintEnvironmentInfo(ContainerName(), k8sNamespace)
 }
 
 func ClientSet(config clientcmd.ClientConfig, ch chan<- bool) {

@@ -49,10 +49,17 @@ func ResolveResourceName() string {
 
 // ContainerName returns container name from the command line argument.
 // If the command line argument is set, it has a priority.
+// Otherwise, it uses the mapping from the configuration file or the microservice name.
 // Container name is also used as a part of the resource name.
 func ContainerName() string {
 	if arg_k8sResourceFullName != "" {
+		util.Debug("Using container name from the command line flag '--k8s-name': ", arg_k8sResourceFullName)
 		return arg_k8sResourceFullName
+	}
+	mappings := config.Mappings[arg_microserviceName]
+	if mappings.K8S != "" {
+		util.Debug("Using container name from the configuration file: ", mappings.K8S)
+		return mappings.K8S
 	}
 	return arg_microserviceName
 }

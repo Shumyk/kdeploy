@@ -24,18 +24,18 @@ func ListRepoImages(ch chan<- *google.Tags) {
 
 	registry := name.WithDefaultRegistry(Registry())
 	repo, err := name.NewRepository(BuildRepository(arg_microserviceName), registry)
-	util.ErrorCheck(err, "Obtaining new repository failed")
+	util.ErrorCheck(err, "Failed to obtain GCR repository '"+arg_microserviceName+"'")
 
 	keychain := google.WithAuthFromKeychain(auth)
 	tags, err := google.List(repo, keychain)
-	util.ErrorCheck(err, "Listing tags failed")
+	util.ErrorCheck(err, "Failed to list tags for GCR repository '"+arg_microserviceName+"'")
 
 	ch <- tags
 }
 
 func ListRepos() (results []string) {
 	registry, err := name.NewRegistry(Registry())
-	util.ErrorCheck(err, "Obtaining new registry failed")
+	util.ErrorCheck(err, "Failed to obtain GCR registry '"+Registry()+"'")
 
 	authOption := remote.WithAuthFromKeychain(auth)
 	repos, err := remote.Catalog(ctx, registry, authOption)

@@ -8,6 +8,8 @@ import (
 var config configuration
 
 type configuration struct {
+	Debug bool `yaml:"debug,omitempty"`
+
 	Registry     string              `yaml:"registry,omitempty"`
 	Repository   string              `yaml:"repository,omitempty"`
 	StatefulSets []string            `yaml:"statefulSets,omitempty"`

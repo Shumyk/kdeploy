@@ -16,12 +16,32 @@ const (
 )
 
 var (
+	isDebug = false
+
 	termWidth, _, _ = term.GetSize(int(os.Stdin.Fd()))
 	header          = color.New(color.Bold, color.BgHiGreen).SprintFunc()
 	green           = color.New(color.Bold, color.FgHiGreen).SprintFunc()
 	purple          = color.New(color.Bold, color.FgMagenta).SprintFunc()
+	cyan            = color.New(color.Bold, color.FgCyan).SprintFunc()
 	red             = color.New(color.Bold, color.FgHiRed).SprintFunc()
 )
+
+func SetDebugMode(isDebugMode bool) {
+	isDebug = isDebugMode
+}
+
+func Debug(msg ...any) {
+	if isDebug {
+		CyanStout("[DEBUG]", msg)
+	}
+}
+
+// Laugh just prints error message if present and ignores it
+func Laugh(err error, msg ...any) {
+	if err != nil {
+		RedStderr("Error: ", err, msg)
+	}
+}
 
 func DashLine() {
 	fmt.Printf("%s", strings.Repeat("-", termWidth))
@@ -90,6 +110,10 @@ func buildInfoLine(key, value string) string {
 
 func PurpleStout(msg ...any) {
 	_, _ = fmt.Println(purple(msg...))
+}
+
+func CyanStout(msg ...any) {
+	_, _ = fmt.Println(cyan(msg...))
 }
 
 func BoringStderr(msg ...any) {

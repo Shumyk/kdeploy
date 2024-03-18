@@ -16,6 +16,7 @@ import (
 func InitConfig(_ *cobra.Command, _ []string) {
 	LoadConfiguration(nil, nil)
 	validateVitalConfigs()
+	initContext()
 }
 
 func LoadConfiguration(_ *cobra.Command, _ []string) {
@@ -26,19 +27,21 @@ func LoadConfiguration(_ *cobra.Command, _ []string) {
 	configType := "yaml"
 	configPath := filepath.Join(configDir, configName+"."+configType)
 
-	viper.AddConfigPath(configPath)
+	viper.AddConfigPath(configDir)
 	viper.SetConfigName(configName)
 	viper.SetConfigType(configType)
 
 	createConfigFileIfNotExists(configDir, configPath)
-	util.Laugh(viper.ReadInConfig())
-	util.Laugh(viper.Unmarshal(&config))
+	util.Laugh(viper.ReadInConfig(), "Failed to read configuration file")
+	util.Laugh(viper.Unmarshal(&config), "Failed to unmarshal configuration")
 }
 
 func createConfigFileIfNotExists(configDir, configPath string) {
-	if _, err := os.Stat(configPath); os.IsExist(err) {
+	if _, err := os.Stat(configPath); nil == err || os.IsExist(err) {
+		util.Debug("Config file exists")
 		return
 	}
+	util.Debug("Creating config file")
 	err := os.MkdirAll(configDir, os.ModePerm)
 	util.ErrorCheck(err, "Failed to create config directory")
 	file, err := os.Create(configPath)
@@ -73,4 +76,9 @@ func handleConfigPromptError(configName string, err error) {
 		}
 		util.ErrorCheck(err, "Failed to request user input for missing configuration")
 	}
+}
+
+func initContext() {
+	util.SetDebugMode(config.Debug)
+	util.Debug("Debug mode is enabled")
 }

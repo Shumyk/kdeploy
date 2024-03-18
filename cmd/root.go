@@ -83,6 +83,7 @@ func deploySelectingRegistry() {
 
 func deployMicroservice(args []string) {
 	arg_microserviceName = args[0]
+	util.Debug("Deploying microservice: ", arg_microserviceName)
 	if arg_previousMode {
 		KDeployPrevious()
 	} else {

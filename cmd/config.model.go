@@ -10,14 +10,14 @@ var config configuration
 type configuration struct {
 	Debug bool `yaml:"debug,omitempty"`
 
-	Registry     string              `yaml:"registry,omitempty"`
-	Repository   string              `yaml:"repository,omitempty"`
-	StatefulSets []string            `yaml:"statefulSets,omitempty"`
-	Mappings     map[string]Names    `yaml:"mappings,omitempty"`
-	Previous     PreviousDeployments `yaml:"previous,omitempty" conf:"no"`
+	Registry     string                     `yaml:"registry,omitempty"`
+	Repository   string                     `yaml:"repository,omitempty"`
+	StatefulSets []string                   `yaml:"statefulSets,omitempty"`
+	Mappings     map[string]ServiceMappings `yaml:"mappings,omitempty"`
+	Previous     PreviousDeployments        `yaml:"previous,omitempty" conf:"no"`
 }
 
-type Names struct {
+type ServiceMappings struct {
 	GCR string `yaml:"gcr,omitempty"`
 	K8S string `yaml:"k8s,omitempty"`
 }

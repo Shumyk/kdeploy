@@ -14,9 +14,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var (
+	MAPPINGS = "mappings"
+
+	complexConfigurations = map[string]struct{}{
+		MAPPINGS: {},
+	}
+)
+
 func runConfigView(_ *cobra.Command, _ []string) {
 	viewBytes, err := yaml.Marshal(config.View())
-	util.ErrorCheck(err, "Config file marshalling failed")
+	util.ErrorCheck(err, "Failed to marshal configuration to yaml")
 	fmt.Println(string(viewBytes))
 }
 
@@ -44,6 +52,29 @@ func RunConfigSet(_ *cobra.Command, args []string) {
 	util.RedStderr("Non existing property: ", property)
 	util.BoringStderr("Possible configuration properties:")
 	util.ErrorCheck(properties.Flush(), "Could not print configuration properties")
+}
+
+func RunConfigDefine(_ *cobra.Command, args []string) {
+	property := args[0]
+	// check if complexConfigurations contains property
+	if _, ok := complexConfigurations[property]; !ok {
+		util.RedStderr("Non existing complex property: ", property)
+		return
+	}
+
+	switch property {
+	case MAPPINGS:
+		handleMappingsDefine()
+	}
+}
+
+func handleMappingsDefine() {
+	serviceName := inputConfig("service name", "api-events")
+	gcr := inputConfig("GCR", "events")
+	k8s := inputConfig("K8S", "cmpn-events")
+
+	config.Mappings[serviceName] = ServiceMappings{GCR: gcr, K8S: k8s}
+	SetConfigHandling("mappings", config.Mappings)
 }
 
 func RunConfigEdit(_ *cobra.Command, _ []string) {

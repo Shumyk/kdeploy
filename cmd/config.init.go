@@ -1,22 +1,18 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
-	"github.com/AlecAivazis/survey/v2/terminal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	prompt "shumyk/kdeploy/cmd/prompt"
 	util "shumyk/kdeploy/cmd/util"
 )
 
 func InitConfig(_ *cobra.Command, _ []string) {
 	LoadConfiguration(nil, nil)
 	validateVitalConfigs()
-	initContext()
 }
 
 func LoadConfiguration(_ *cobra.Command, _ []string) {
@@ -34,6 +30,8 @@ func LoadConfiguration(_ *cobra.Command, _ []string) {
 	createConfigFileIfNotExists(configDir, configPath)
 	util.Laugh(viper.ReadInConfig(), "Failed to read configuration file")
 	util.Laugh(viper.Unmarshal(&config), "Failed to unmarshal configuration")
+
+	initContext()
 }
 
 func createConfigFileIfNotExists(configDir, configPath string) {
@@ -51,30 +49,10 @@ func createConfigFileIfNotExists(configDir, configPath string) {
 
 func validateVitalConfigs() {
 	if len(config.Registry) == 0 {
-		promptAndSaveConfig("registry", "*gcr.io")
+		inputVitalConfig("registry", "*gcr.io")
 	}
 	if len(config.Repository) == 0 {
-		promptAndSaveConfig("repository", "your-domain-infra/domain/domain-")
-	}
-}
-
-func promptAndSaveConfig(configName, example string) {
-	util.PurpleStout(configName, " not found in ", viper.ConfigFileUsed())
-	configValue, err := prompt.TextInput(configName, example)
-	handleConfigPromptError(configName, err)
-	SetConfigHandling(configName, configValue)
-}
-
-func handleConfigPromptError(configName string, err error) {
-	if err != nil {
-		if err == terminal.InterruptErr {
-			util.PurpleStout("did you ctrl-c me? anyway, you can set it using:")
-			util.BoringStderr(fmt.Sprintf("\tkdeploy config set %v <value>", configName))
-			util.BoringStderr("or manually editing:")
-			util.BoringStderr("\tkdeploy config edit")
-			os.Exit(1)
-		}
-		util.ErrorCheck(err, "Failed to request user input for missing configuration")
+		inputVitalConfig("repository", "your-domain-infra/domain/domain-")
 	}
 }
 

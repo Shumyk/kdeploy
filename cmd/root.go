@@ -63,6 +63,20 @@ Use ',' delimiter (without space) for array type properties (e.x. statefulsets).
 		Run:  RunConfigSet,
 		Args: cobra.ExactArgs(2),
 	}
+	configDefineCmd = cobra.Command{
+		Use:   "define [property]",
+		Short: "Define complex property in configuration file.",
+		Long: `
+Define complex properties in configuration file.
+You will be prompted to enter values.
+Currently supported complex properties:
+	- mappings: define service name, GCR and K8S names for it.
+		    used if you have different names for GCR and K8S resources.
+		    so you don't have to use --k8s-name flag.
+	  > kdeploy config define mappings`,
+		Run:  RunConfigDefine,
+		Args: cobra.ExactArgs(1),
+	}
 )
 
 func kdeployRun(_ *cobra.Command, args []string) {
@@ -100,6 +114,6 @@ func init() {
 	// TODO: update README.md with this flag
 	kdeploy.Flags().StringVarP(&arg_k8sResourceFullName, "k8s-name", "n", "", "k8s name to use for deployment")
 
-	configCmd.AddCommand(&configViewCmd, &configSetCmd, &configEditCmd)
+	configCmd.AddCommand(&configViewCmd, &configSetCmd, &configDefineCmd, &configEditCmd)
 	kdeploy.AddCommand(&configCmd)
 }

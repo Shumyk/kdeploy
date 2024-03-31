@@ -18,6 +18,7 @@ func deployTemplate(selectImage ImageSelecter) {
 	go ClientSet(clientConfig, clientSetCreatedChannel)
 
 	selectedImage := selectImage(clientSetCreatedChannel)
+	util.Debug("Selected Image: ", selectedImage)
 
 	SetImage(&selectedImage)
 }

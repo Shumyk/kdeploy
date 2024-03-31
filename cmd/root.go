@@ -111,7 +111,6 @@ func Execute() {
 
 func init() {
 	kdeploy.Flags().BoolVarP(&arg_previousMode, "previous", "p", false, "deploy previous images")
-	// TODO: update README.md with this flag
 	kdeploy.Flags().StringVarP(&arg_k8sResourceFullName, "k8s-name", "n", "", "k8s name to use for deployment")
 
 	configCmd.AddCommand(&configViewCmd, &configSetCmd, &configDefineCmd, &configEditCmd)

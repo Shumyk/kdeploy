@@ -59,16 +59,29 @@ Running deploy-previous mode without specifying microservice results in promptin
 ---
 ### Configuration ⚙️
 
-kdeploy requires two configuration properties - `registry` and `repository`.  
-The `registry` is where to look for your images (e.x. `us.gcr.io`), and the `repository` is the path to your images. If not set you will be prompted to enter them.  
+kdeploy requires two configuration properties to run:
+- `registry` - Google Cloud Registry, is where to look for your images (e.x. `us.gcr.io`).
+- `repository` - path to your images (e.g. `google-infra/google/google-`). 
+
+If not set you will be prompted to enter them on startup.  
 Set them using:
 > kdeploy config set [registry|repository] [value]
 
 Or edit configuration file manually: 
 > kdeploy config edit
 
-Assumed that all workloads are of Deployment type. If some are StatefulSets, set them in configurations (comma separated):  
->kdeploy config set statefulsets ms-events,ms-core
+Assumed that all Kubernetes workloads are of Deployment type. If some are Stateful Sets, set them in configurations (comma separated):  
+> kdeploy config set statefulsets ms-events,ms-core
+
+kdeploy allows you to define mappings for your microservices in the configuration file. This is useful when microservice have different namings in GCR and Kubernetes.\
+To define a mapping, use the following command:
+> kdeploy config define mappings
+
+Then you will be prompted to provide microservice name (required) and names for GCR and Kubernetes (optional).\
+You can define mappings for multiple microservices by running the command multiple times with different microservice names.
+
+To view the current configuration, use the following command:
+> kdeploy config view
 
 ---
 ### How to make it run? 🎬

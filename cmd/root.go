@@ -73,7 +73,7 @@ Currently supported complex properties:
 	- mappings: define service name, GCR and K8S names for it.
 		    used if you have different names for GCR and K8S resources.
 		    so you don't have to use --k8s-name flag.
-	  > kdeploy config define mappings`,
+	  	    > kdeploy config define mappings`,
 		Run:  RunConfigDefine,
 		Args: cobra.ExactArgs(1),
 	}

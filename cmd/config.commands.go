@@ -56,7 +56,6 @@ func RunConfigSet(_ *cobra.Command, args []string) {
 
 func RunConfigDefine(_ *cobra.Command, args []string) {
 	property := args[0]
-	// check if complexConfigurations contains property
 	if _, ok := complexConfigurations[property]; !ok {
 		util.RedStderr("Non existing complex property: ", property)
 		return
@@ -69,9 +68,9 @@ func RunConfigDefine(_ *cobra.Command, args []string) {
 }
 
 func handleMappingsDefine() {
-	serviceName := inputConfig("service name", "api-events")
-	gcr := inputConfig("GCR", "events")
-	k8s := inputConfig("K8S", "cmpn-events")
+	serviceName := inputConfig("service name", "api-events", true)
+	gcr := inputConfig("GCR", "events", false)
+	k8s := inputConfig("K8S", "cmpn-events", false)
 
 	config.Mappings[serviceName] = ServiceMappings{GCR: gcr, K8S: k8s}
 	SetConfigHandling("mappings", config.Mappings)

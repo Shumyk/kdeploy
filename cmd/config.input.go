@@ -11,17 +11,17 @@ import (
 
 func inputVitalConfig(configName, example string) {
 	util.PurpleStout(configName, " not found in ", viper.ConfigFileUsed())
-	configValue := inputConfig(configName, example)
+	configValue := inputConfig(configName, example, true)
 	SetConfigHandling(configName, configValue)
 }
 
-func inputConfig(configName, example string) (value string) {
+func inputConfig(configName, example string, retry bool) (value string) {
 	for {
 		var err error
 		value, err = prompt.TextInput(configName, example)
 		handleConfigPromptError(err)
 
-		if len(value) == 0 {
+		if retry && len(value) == 0 {
 			util.CyanStout("looks like empty input, try to press some buttons this time")
 		} else {
 			return

@@ -22,13 +22,14 @@ func ListRepoImages(ch chan<- *google.Tags) {
 	_, err := google.NewGcloudAuthenticator()
 	util.ErrorCheck(err, "GCloud authentication failed")
 
+	gcrRepoName := FullGcrRepositoryName()
 	registry := name.WithDefaultRegistry(Registry())
-	repo, err := name.NewRepository(BuildRepository(arg_microserviceName), registry)
-	util.ErrorCheck(err, "Failed to obtain GCR repository '"+arg_microserviceName+"'")
+	repo, err := name.NewRepository(gcrRepoName, registry)
+	util.ErrorCheck(err, "Failed to obtain GCR repository '"+gcrRepoName+"'")
 
 	keychain := google.WithAuthFromKeychain(auth)
 	tags, err := google.List(repo, keychain)
-	util.ErrorCheck(err, "Failed to list tags for GCR repository '"+arg_microserviceName+"'")
+	util.ErrorCheck(err, "Failed to list tags for GCR repository '"+gcrRepoName+"'")
 
 	ch <- tags
 }

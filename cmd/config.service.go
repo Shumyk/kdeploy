@@ -39,8 +39,17 @@ func Repository() string {
 	return config.Repository
 }
 
-func BuildRepository(service string) string {
-	return config.Repository + service
+func FullGcrRepositoryName() string {
+	return config.Repository + GcrRepositoryName()
+}
+
+func GcrRepositoryName() string {
+	mappings := config.Mappings[arg_microserviceName]
+	if mappings.GCR != "" {
+		util.Debug("Using GCR repository name from the configuration mappings: ", mappings.GCR)
+		return mappings.GCR
+	}
+	return arg_microserviceName
 }
 
 func ResolveResourceName() string {

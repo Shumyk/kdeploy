@@ -26,7 +26,9 @@ func GetImage() (tag, digest string) {
 }
 
 func SetImage(image *model.SelectedImage) {
-	newImage := util.ComposeImagePath(Registry(), Repository(), arg_microserviceName, image.Tag(), image.Digest)
+	newImage := util.ComposeImagePath(Registry(), Repository(), GcrRepositoryName(), image.Tag(), image.Digest)
+	util.Debug("Setting new image: ", newImage)
+
 	imagePatch := composeImagePatch(newImage)
 	data, err := json.Marshal(imagePatch)
 	util.ErrorCheck(err, "Marshalling image patch failed")

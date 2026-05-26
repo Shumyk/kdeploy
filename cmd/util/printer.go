@@ -39,7 +39,7 @@ func Debug(msg ...any) {
 // Laugh just prints error message if present and ignores it
 func Laugh(err error, msg ...any) {
 	if err != nil {
-		RedStderr("Error: ", err, msg)
+		RedStderr("Error: ", msg, err)
 	}
 }
 

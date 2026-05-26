@@ -19,7 +19,7 @@ var (
 )
 
 func ListRepoImages(ch chan<- *google.Tags) {
-	_, err := google.NewGcloudAuthenticator()
+	_, err := google.NewGcloudAuthenticator(ctx)
 	util.ErrorCheck(err, "GCloud authentication failed")
 
 	gcrRepoName := FullGcrRepositoryName()

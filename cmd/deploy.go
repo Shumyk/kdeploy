@@ -4,19 +4,20 @@ import (
 	model "shumyk/kdeploy/cmd/model"
 	prompt "shumyk/kdeploy/cmd/prompt"
 	util "shumyk/kdeploy/cmd/util"
-
-	"github.com/google/go-containerregistry/pkg/v1/google"
 )
 
 type ImageSelecter func(<-chan bool) model.SelectedImage
 
 func deployTemplate(selectImage ImageSelecter) {
+	util.Debug("Creating client config from K8S config")
 	clientConfig := CreateClientConfigFromKubeConfig()
 	go LoadMetadata(clientConfig)
 
+	util.Debug("Creating client set")
 	clientSetCreatedChannel := make(chan bool)
 	go ClientSet(clientConfig, clientSetCreatedChannel)
 
+	util.Debug("Selecting image")
 	selectedImage := selectImage(clientSetCreatedChannel)
 	util.Debug("Selected Image: ", selectedImage)
 
@@ -28,16 +29,15 @@ func DeployNew() {
 }
 
 func newImageSelecter(clientSetCreated <-chan bool) model.SelectedImage {
-	images := make(chan *google.Tags)
-	go ListRepoImages(images)
+	images := make(chan model.ImageOptions)
+	go ListRepoImagesGAR(images)
 
 	<-clientSetCreated
 	tag, digest := GetImage()
 	defer SaveDeployedImage(tag, digest)
 	util.PrintImageInfo(util.HeaderCurrentImage, tag, digest)
 
-	var manifests model.Manifests = (<-images).Manifests
-	return prompt.ImageSelect(manifests)
+	return prompt.ImageSelect(<-images)
 }
 
 func DeployPrevious(images model.PreviousImages) {

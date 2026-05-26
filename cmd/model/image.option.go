@@ -19,17 +19,21 @@ func (o ImageOption) String() string {
 
 type ImageOptions []ImageOption
 
-func (opts ImageOptions) Stringify() []string {
-	return util.SliceMapping(opts, ImageOption.String)
+func (o ImageOptions) ImageOptions() ImageOptions {
+	return o
 }
 
-func (opts ImageOptions) Sorted() ImageOptions {
-	sort.SliceStable(opts, sortByCreated(opts))
-	return opts
+func (o ImageOptions) Stringify() []string {
+	return util.SliceMapping(o, ImageOption.String)
 }
 
-func sortByCreated(options ImageOptions) func(i, j int) bool {
+func (o ImageOptions) Sorted() ImageOptions {
+	sort.SliceStable(o, sortByCreated(o))
+	return o
+}
+
+func sortByCreated(o ImageOptions) func(i, j int) bool {
 	return func(i, j int) bool {
-		return options[i].Created.After(options[j].Created)
+		return o[i].Created.After(o[j].Created)
 	}
 }

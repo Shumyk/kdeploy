@@ -39,6 +39,10 @@ func Repository() string {
 	return config.Repository
 }
 
+func FullRepoName() string {
+	return Registry() + "/" + FullGcrRepositoryName()
+}
+
 func FullGcrRepositoryName() string {
 	return config.Repository + GcrRepositoryName()
 }

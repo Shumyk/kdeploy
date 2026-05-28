@@ -15,10 +15,14 @@ import (
 )
 
 var (
-	MAPPINGS = "mappings"
+	COMPLEX_MAPPINGS = "mappings"
+	COMPLEX_GAR      = "gar"
+	COMPLEX_K8S      = "k8s"
 
 	complexConfigurations = map[string]struct{}{
-		MAPPINGS: {},
+		COMPLEX_MAPPINGS: {},
+		COMPLEX_GAR:      {},
+		COMPLEX_K8S:      {},
 	}
 )
 
@@ -62,18 +66,40 @@ func RunConfigDefine(_ *cobra.Command, args []string) {
 	}
 
 	switch property {
-	case MAPPINGS:
-		handleMappingsDefine()
+	case COMPLEX_MAPPINGS:
+		handleDefineMappings()
+	case COMPLEX_GAR:
+		handleDefineGar()
+	case COMPLEX_K8S:
+		handleDefineK8s()
 	}
 }
 
-func handleMappingsDefine() {
+func handleDefineMappings() {
 	serviceName := inputConfig("service name", "api-events", true)
 	gcr := inputConfig("GCR", "events", false)
 	k8s := inputConfig("K8S", "cmpn-events", false)
 
-	config.Mappings[serviceName] = ServiceMappings{GCR: gcr, K8S: k8s}
+	config.Mappings[serviceName] = ServiceMappings{GAR: gcr, K8S: k8s}
 	SetConfigHandling("mappings", config.Mappings)
+}
+
+func handleDefineGar() {
+	config.GAR = GAR{
+		Project:       inputConfig("gcloud project", "company-infra", true),
+		Location:      inputConfig("location", "us", true),
+		Repository:    inputConfig("repository", "docker-images", true),
+		PackagePrefix: inputConfig("packages prefix, optional", "company-", false),
+	}
+	SetConfigHandling("gar", config.GAR)
+}
+
+func handleDefineK8s() {
+	config.K8S = K8S{
+		Registry:   inputConfig("registry", "us-docker.pkg.dev", true),
+		Repository: inputConfig("repository", "google-infra/docker/", true),
+	}
+	SetConfigHandling("k8s", config.K8S)
 }
 
 func RunConfigEdit(_ *cobra.Command, _ []string) {

@@ -3,6 +3,7 @@ package cmd
 import (
 	model "shumyk/kdeploy/cmd/model"
 	util "shumyk/kdeploy/cmd/util"
+	"slices"
 
 	"github.com/spf13/viper"
 )
@@ -32,28 +33,26 @@ func GetPreviousDeployments() PreviousDeployments {
 }
 
 func Registry() string {
-	return config.Registry
+	return config.K8S.Registry
 }
 
 func Repository() string {
-	return config.Repository
-}
-
-func FullRepoName() string {
-	return Registry() + "/" + FullGcrRepositoryName()
+	return config.K8S.Repository
 }
 
 func FullGcrRepositoryName() string {
-	return config.Repository + GcrRepositoryName()
+	return config.K8S.Repository + GarPackageName()
 }
 
-func GcrRepositoryName() string {
+func GarPackageName() string {
 	mappings := config.Mappings[arg_microserviceName]
-	if mappings.GCR != "" {
-		util.Debug("Using GCR repository name from the configuration mappings: ", mappings.GCR)
-		return mappings.GCR
+	if mappings.GAR != "" {
+		util.Debug("Using GCR repository name from the configuration mappings: ", mappings.GAR)
+		return mappings.GAR
 	}
-	return arg_microserviceName
+
+	util.Debug("No mapping found, using raw argument, prefix: ", config.GAR.PackagePrefix)
+	return config.GAR.PackagePrefix + arg_microserviceName
 }
 
 func ResolveResourceName() string {
@@ -78,10 +77,8 @@ func ContainerName() string {
 }
 
 func ResolveResourceType() string {
-	for _, statefulSet := range config.StatefulSets {
-		if statefulSet == arg_microserviceName {
-			return "statefulsets"
-		}
+	if slices.Contains(config.StatefulSets, arg_microserviceName) {
+		return "statefulsets"
 	}
 	return "deployments"
 }

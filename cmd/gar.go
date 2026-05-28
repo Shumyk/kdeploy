@@ -26,7 +26,7 @@ func ListRepoImagesGAR(ch chan<- model.ImageOptions) {
 	defer client.Close()
 
 	req := &garPB.ListVersionsRequest{
-		Parent:   "projects/*project*/locations/*location*/repositories/docker/packages/*prefix*-" + GcrRepositoryName(),
+		Parent:   "projects/" + config.GAR.Project + "/locations/" + config.GAR.Location + "/repositories/" + config.GAR.Repository + "/packages/" + GarPackageName(),
 		PageSize: 100,
 		OrderBy:  "create_time desc",
 		View:     garPB.VersionView_FULL,
@@ -34,7 +34,7 @@ func ListRepoImagesGAR(ch chan<- model.ImageOptions) {
 
 	util.Debug("Listing images in repository: ", req.Parent)
 	it := client.ListVersions(ctx, req)
-	util.Debug("Retrieved images: ", it.PageInfo().Remaining())
+	util.Debug("Retrieved images: ", it.PageInfo().MaxSize)
 
 	var images model.ImageOptions
 	for {
@@ -52,6 +52,9 @@ func ListRepoImagesGAR(ch chan<- model.ImageOptions) {
 
 		util.Debug("Image: ", image.Name, image.RelatedTags)
 
+		// tags format is:
+		// 		projects/{project}/locations/{location}/repositories/{repo}/packages/{package}/tags/{tag}
+		// so, we need to take only {tag} part
 		tags := util.SliceMapping(image.RelatedTags, func(t *garPB.Tag) string {
 			parts := strings.Split(t.Name, "/")
 			return parts[len(parts)-1]

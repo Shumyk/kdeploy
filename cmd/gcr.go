@@ -47,8 +47,8 @@ func ListRepos() (results []string) {
 
 func filterRepos(reposRaw []string) (results []string) {
 	for _, repoRaw := range reposRaw {
-		if strings.HasPrefix(repoRaw, Repository()) {
-			repo := strings.TrimPrefix(repoRaw, Repository())
+		if after, ok := strings.CutPrefix(repoRaw, Repository()); ok {
+			repo := after
 			results = append(results, repo)
 		}
 	}

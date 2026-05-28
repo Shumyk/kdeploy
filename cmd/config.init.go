@@ -48,15 +48,22 @@ func createConfigFileIfNotExists(configDir, configPath string) {
 }
 
 func validateVitalConfigs() {
-	if len(config.Registry) == 0 {
-		inputVitalConfig("registry", "*gcr.io")
+	if !config.GAR.isValid() {
+		util.PurpleStout("`gar` not found in ", viper.ConfigFileUsed())
+		handleDefineGar()
 	}
-	if len(config.Repository) == 0 {
-		inputVitalConfig("repository", "your-domain-infra/domain/domain-")
+	if !config.K8S.isValid() {
+		util.PurpleStout("`k8s` not found in ", viper.ConfigFileUsed())
+		handleDefineK8s()
 	}
 }
 
 func initContext() {
 	util.SetDebugMode(config.Debug)
 	util.Debug("Debug mode is enabled")
+
+	if config.Debug {
+		viper.Debug()
+	}
+	util.Debug("Initiallized config: ", config)
 }

@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"maps"
 	util "shumyk/kdeploy/cmd/util"
+	"slices"
 
 	"github.com/spf13/cobra"
 )
@@ -66,16 +68,25 @@ Use ',' delimiter (without space) for array type properties (e.x. statefulsets).
 	configDefineCmd = cobra.Command{
 		Use:   "define [property]",
 		Short: "Define complex property in configuration file.",
-		Long: `
-Define complex properties in configuration file.
-You will be prompted to enter values.
+		Long: `Define complex properties in configuration file.
+You will be prompted to enter values interactively.
+
 Currently supported complex properties:
-	- mappings: define service name, GCR and K8S names for it.
-		    used if you have different names for GCR and K8S resources.
-		    so you don't have to use --k8s-name flag.
-	  	    > kdeploy config define mappings`,
-		Run:  RunConfigDefine,
-		Args: cobra.ExactArgs(1),
+  gar
+    Defines Google Artifact Registry settings:
+    project, location, repository and optional package prefix.
+    ref: projects/{project}/locations/{location}/repositories/{repo}/packages/{package-prefix}{cli-argument}
+
+  mappings
+    Defines custom service mappings for a microservice:
+    service name, GAR package name and K8S resource/container name.
+    Use this when GAR or K8S names differ from the microservice name,
+    so you do not have to pass --k8s-name every time.`,
+		Example: `  kdeploy config define gar
+  kdeploy config define mappings`,
+		Run:       RunConfigDefine,
+		Args:      cobra.ExactArgs(1),
+		ValidArgs: slices.Collect(maps.Keys(complexConfigurations)),
 	}
 )
 

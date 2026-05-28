@@ -16,16 +16,17 @@ var (
 	kdeploy = cobra.Command{
 		Use:   "kdeploy [microservice]",
 		Short: "k[8s]deploy - deploy from the terminal",
-		Long: `Searches for images of requested microservice in Google Container Registry,
+		Long: `Searches for images of requested microservice in Google Artifact Registry,
 Prompts you to interactively select an image for deployment (arrows navigation, search features),
 And sets the selected image in the workload.
 If microservice was not specified - it obtains possible repositories from the registry and prompts you to select it first.
 
-kdeploy requires two configuration properties - registry and repository.
-The registry is where to look for your images (e.x. us.gcr.io), and the repository is the path to your images.
-Set them using:
-    kdeploy config set [registry|repository] [value]
-Or  kdeploy config edit
+kdeploy requires GAR and K8S configuration blocks.
+Define them interactively:
+    kdeploy config define gar
+    kdeploy config define k8s
+Or edit them manually:
+    kdeploy config edit
 
 Assumed that all workloads are of Deployment type. If some are StatefulSets, set them in configurations:
     kdeploy config set statefulsets ms-events,ms-core
@@ -60,7 +61,7 @@ kdeploy remembers every deployment you made and allows you to redeploy previous 
 		Short: "Conveniently set properties.",
 		Long: `Conveniently set properties.
 Use ',' delimiter (without space) for array type properties (e.x. statefulsets).`,
-		Example: `  kdeploy config set registry us.gcr.io  
+		Example: `  kdeploy config set debug true
   kdeploy config set statefulsets ms-events,ms-core`,
 		Run:  RunConfigSet,
 		Args: cobra.ExactArgs(2),
@@ -77,12 +78,18 @@ Currently supported complex properties:
     project, location, repository and optional package prefix.
     ref: projects/{project}/locations/{location}/repositories/{repo}/packages/{package-prefix}{cli-argument}
 
+  k8s
+    Defines the image path used in Kubernetes manifests:
+    registry host and repository prefix.
+    ref: {registry}/{repository}{gar-package}:{tag}@sha256:{digest}
+
   mappings
     Defines custom service mappings for a microservice:
     service name, GAR package name and K8S resource/container name.
     Use this when GAR or K8S names differ from the microservice name,
     so you do not have to pass --k8s-name every time.`,
 		Example: `  kdeploy config define gar
+  kdeploy config define k8s
   kdeploy config define mappings`,
 		Run:       RunConfigDefine,
 		Args:      cobra.ExactArgs(1),

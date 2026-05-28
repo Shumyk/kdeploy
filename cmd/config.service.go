@@ -47,7 +47,7 @@ func FullGcrRepositoryName() string {
 func GarPackageName() string {
 	mappings := config.Mappings[arg_microserviceName]
 	if mappings.GAR != "" {
-		util.Debug("Using GCR repository name from the configuration mappings: ", mappings.GAR)
+		util.Debug("Using GAR package name from the configuration mappings: ", mappings.GAR)
 		return mappings.GAR
 	}
 

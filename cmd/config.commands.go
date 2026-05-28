@@ -77,7 +77,7 @@ func RunConfigDefine(_ *cobra.Command, args []string) {
 
 func handleDefineMappings() {
 	serviceName := inputConfig("service name", "api-events", true)
-	gcr := inputConfig("GCR", "events", false)
+	gcr := inputConfig("GAR", "events", false)
 	k8s := inputConfig("K8S", "cmpn-events", false)
 
 	config.Mappings[serviceName] = ServiceMappings{GAR: gcr, K8S: k8s}

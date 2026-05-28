@@ -64,7 +64,10 @@ func ListRepoImagesGAR(ch chan<- model.ImageOptions) {
 			model.ImageOption{
 				Created: image.UpdateTime.AsTime(),
 				Tags:    tags,
-				Digest:  strings.Split(image.Name, ":")[1],
+				// image name format:
+				// 		projects/{project}/locations/{location}/repositories/{repo}/packages/{package}/versions/sha256:{digest}
+				// so, we need only digest after `sha256:`
+				Digest: strings.Split(image.Name, ":")[1],
 			},
 		)
 	}

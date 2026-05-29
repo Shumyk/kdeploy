@@ -66,4 +66,6 @@ func initContext() {
 		viper.Debug()
 	}
 	util.Debug("Initiallized config: ", config)
+
+	garGuy = GetGarGuy(config.GAR)
 }

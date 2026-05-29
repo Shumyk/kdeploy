@@ -115,3 +115,77 @@ To view the current configuration, use the following command:
 
 Run `go build` command in the root directory to build the binary file.
 Then place it on at `/usr/local/bin` for convenient access anywhere on your system.
+
+Minimal setup requirements:
+- A working Kubernetes context in your local `~/.kube/config`.
+- Google credentials that can read Artifact Registry packages and versions.
+- A populated kdeploy config file at `~/.config/kdeploy/.kdeploy.yaml`.
+
+Recommended first-run flow:
+
+```bash
+go build -o kdeploy
+mv ./kdeploy /usr/local/bin/kdeploy
+
+kdeploy config define gar
+kdeploy config define k8s
+kdeploy config define mappings   # optional
+
+kdeploy config view
+kdeploy <microservice>
+```
+
+Google authentication:
+- kdeploy uses Application Default Credentials for Google Artifact Registry access.
+- In local development, the usual setup is:
+
+```bash
+gcloud auth application-default login
+```
+
+- You can also use a service account through standard ADC mechanisms if that is how your environment is configured.
+
+Kubernetes access:
+- kdeploy reads your current kube context from `~/.kube/config`.
+- Before using kdeploy, make sure the selected context points to the target cluster and namespace flow you expect.
+
+Configuration file:
+- Path: `~/.config/kdeploy/.kdeploy.yaml`
+- The file is created automatically if it does not exist.
+- `kdeploy config edit` opens that file directly.
+
+How image names are composed:
+- GAR package lookup uses:
+  `projects/{gar.project}/locations/{gar.location}/repositories/{gar.repository}/packages/{gar.packagePrefix}{microservice}`
+- Kubernetes image patching uses:
+  `{k8s.registry}/{k8s.repository}{gar-package}:{tag}@sha256:{digest}`
+- If `mappings.<service>.gar` is set, that mapped GAR package name is used instead of `{gar.packagePrefix}{microservice}`.
+
+Example:
+
+```yaml
+gar:
+  project: company-infra
+  location: us
+  repository: docker-images
+  packagePrefix: company-
+
+k8s:
+  registry: us-docker.pkg.dev
+  repository: company-infra/docker-images/
+
+mappings:
+  api-events:
+    gar: events
+    k8s: cmpn-events
+```
+
+With this config:
+- `kdeploy api-users` looks up GAR package `company-api-users`
+- `kdeploy api-events` looks up GAR package `events`
+- deploying `api-events` patches the Kubernetes image for container/resource name `cmpn-events`
+
+Troubleshooting:
+- If GAR listing fails with a Google auth error, verify ADC is configured with `gcloud auth application-default login`.
+- If Kubernetes requests fail, verify your current kube context and cluster access before running kdeploy.
+- If a service uses different names in GAR and Kubernetes, add a `mappings` entry instead of relying on `--k8s-name` every time.

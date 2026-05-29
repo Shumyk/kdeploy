@@ -17,10 +17,17 @@ type GarGuy struct {
 }
 
 func GetGarGuy(conf GAR) *GarGuy {
-	g := &GarGuy{conf: conf}
-	g.buildClient()
+	return &GarGuy{conf: conf}
+}
 
-	return g
+func (g *GarGuy) getClient() *gar.Client {
+	if g == nil {
+		return nil
+	}
+	if g.client == nil {
+		g.buildClient()
+	}
+	return g.client
 }
 
 func (g *GarGuy) buildClient() {

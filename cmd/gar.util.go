@@ -14,6 +14,12 @@ func takeLastPathPart(resourceName string) string {
 }
 
 func packageToMicroserviceName(packageName string) string {
+	for serviceName, mapping := range config.Mappings {
+		if mapping.GAR == packageName {
+			return serviceName
+		}
+	}
+
 	result, _ := strings.CutPrefix(packageName, config.GAR.PackagePrefix)
 	return result
 }

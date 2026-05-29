@@ -25,6 +25,11 @@ func TestPackageToMicroserviceName(t *testing.T) {
 		want        string
 	}{
 		{
+			name:        "mapping has priority over prefix stripping",
+			packageName: "events",
+			want:        "api-events",
+		},
+		{
 			name:        "prefix is stripped when mapping is absent",
 			packageName: "company-api-users",
 			want:        "api-users",
@@ -39,7 +44,7 @@ func TestPackageToMicroserviceName(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			if got := packageToMicroserviceName(test.packageName); got != test.want {
-				t.Fatalf("resolveMicroserviceNameFromGarPackage() = %q, want %q", got, test.want)
+				t.Fatalf("packageToMicroserviceName() = %q, want %q", got, test.want)
 			}
 		})
 	}

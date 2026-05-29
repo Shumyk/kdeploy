@@ -15,7 +15,7 @@ func (g *GarGuy) ListPackages() (results []string) {
 	}
 	util.Debug("Listing packages using GAR: ", r.Parent)
 
-	it := g.client.ListPackages(ctx, r)
+	it := g.getClient().ListPackages(ctx, r)
 	for {
 		pkg, err := it.Next()
 		if err == iterator.Done {

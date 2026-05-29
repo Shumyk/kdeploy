@@ -18,7 +18,7 @@ func (g GarGuy) ListPackageVersions(ch chan<- model.ImageOptions) {
 	}
 	util.Debug("Listing versions of package using GAR ", req.Parent)
 
-	it := g.client.ListVersions(ctx, req)
+	it := g.getClient().ListVersions(ctx, req)
 	util.Debug("Retrieved images: ", it.PageInfo().MaxSize)
 
 	var images model.ImageOptions

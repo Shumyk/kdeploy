@@ -10,7 +10,7 @@ func KDeploy() {
 }
 
 func KDeployWithRegistry() {
-	repos := ListRepos()
+	repos := garGuy.ListPackages()
 	arg_microserviceName = prompt.RepoSelect(repos)
 	DeployNew()
 }

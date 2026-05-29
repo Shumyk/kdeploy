@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	model "shumyk/kdeploy/cmd/model"
 	util "shumyk/kdeploy/cmd/util"
 )
@@ -10,15 +11,65 @@ var config configuration
 type configuration struct {
 	Debug bool `yaml:"debug,omitempty"`
 
-	Registry     string                     `yaml:"registry,omitempty"`
-	Repository   string                     `yaml:"repository,omitempty"`
+	GAR          GAR                        `yaml:"gar,omitempty"`
+	K8S          K8S                        `yaml:"k8s,omitempty"`
 	StatefulSets []string                   `yaml:"statefulSets,omitempty"`
 	Mappings     map[string]ServiceMappings `yaml:"mappings,omitempty"`
 	Previous     PreviousDeployments        `yaml:"previous,omitempty" conf:"no"`
 }
 
+type GAR struct {
+	Project       string `yaml:"project"`
+	Location      string `yaml:"location"`
+	Repository    string `yaml:"repository"`
+	PackagePrefix string `yaml:"packagePrefix,omitempty"`
+}
+
+func (g GAR) isValid() bool {
+	if g.Project == "" {
+		return false
+	}
+	if g.Location == "" {
+		return false
+	}
+	if g.Repository == "" {
+		return false
+	}
+
+	return true
+}
+
+func (g GAR) repositoryParentPath() string {
+	return fmt.Sprintf(
+		"projects/%s/locations/%s/repositories/%s",
+		config.GAR.Project,
+		config.GAR.Location,
+		config.GAR.Repository,
+	)
+}
+
+func (g GAR) packageParentPath(packageName string) string {
+	return g.repositoryParentPath() + "/packages/" + packageName
+}
+
+type K8S struct {
+	Registry   string `yaml:"registry"`
+	Repository string `yaml:"repository"`
+}
+
+func (k K8S) isValid() bool {
+	if k.Registry == "" {
+		return false
+	}
+	if k.Repository == "" {
+		return false
+	}
+
+	return true
+}
+
 type ServiceMappings struct {
-	GCR string `yaml:"gcr,omitempty"`
+	GAR string `yaml:"gar,omitempty"`
 	K8S string `yaml:"k8s,omitempty"`
 }
 

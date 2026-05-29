@@ -36,7 +36,7 @@ func handleConfigPromptError(err error) {
 			util.PurpleStout("did you ctrl-c me? anyway, you can set config using:")
 			util.BoringStderr("\tkdeploy config set <property> <value>")
 			util.BoringStderr("or define complex configs interactively:")
-			util.BoringStderr("\tkdeploy config define mappings")
+			util.BoringStderr("\tkdeploy config define [mappings|gar|k8s]")
 			util.BoringStderr("or manually editing:")
 			util.BoringStderr("\tkdeploy config edit")
 			os.Exit(1)

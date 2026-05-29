@@ -30,7 +30,7 @@ func DeployNew() {
 
 func newImageSelecter(clientSetCreated <-chan bool) model.SelectedImage {
 	images := make(chan model.ImageOptions)
-	go ListRepoImagesGAR(images)
+	go garGuy.ListPackageVersions(images)
 
 	<-clientSetCreated
 	tag, digest := GetImage()

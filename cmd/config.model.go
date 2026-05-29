@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	model "shumyk/kdeploy/cmd/model"
 	util "shumyk/kdeploy/cmd/util"
 )
@@ -36,6 +37,19 @@ func (g GAR) isValid() bool {
 	}
 
 	return true
+}
+
+func (g GAR) repositoryParentPath() string {
+	return fmt.Sprintf(
+		"projects/%s/locations/%s/repositories/%s",
+		config.GAR.Project,
+		config.GAR.Location,
+		config.GAR.Repository,
+	)
+}
+
+func (g GAR) packageParentPath(packageName string) string {
+	return g.repositoryParentPath() + "/packages/" + packageName
 }
 
 type K8S struct {

@@ -33,9 +33,10 @@ Assumed that all workloads are of Deployment type. If some are StatefulSets, set
 
 kdeploy remembers every deployment you made and allows you to redeploy previous images.
     kdeploy --previous [microservice]`,
-		Args:   cobra.MaximumNArgs(1),
-		PreRun: InitConfig,
-		Run:    kdeployRun,
+		Args:               cobra.MaximumNArgs(1),
+		PreRun:             InitConfig,
+		PersistentPostRunE: DestroyContext,
+		Run:                kdeployRun,
 	}
 
 	// configurations commands

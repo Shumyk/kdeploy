@@ -27,7 +27,6 @@ func (in *K8sResourceAgnosticResponse) DeepCopyInto(out *K8sResourceAgnosticResp
 	out.TypeMeta = in.TypeMeta
 	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
 	in.Spec.DeepCopyInto(&out.Spec)
-	return
 }
 
 func (in *K8sResourceAgnosticResponse) DeepCopyObject() runtime.Object {
